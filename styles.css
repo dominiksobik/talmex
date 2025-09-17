@@ -21,6 +21,7 @@ body {
     --brand: #199848;
     --sygnet-size-closed: 67px;
     --pale-green: #eaf7f0;
+    --nav-current-width: var(--nav-w-closed);
 }
 
 /* ====== Stabilna prawa linia (animuje left razem z panelem) ====== */
@@ -38,28 +39,141 @@ body {
 
 /* ====== SZYBKI KONTAKT ====== */
 .quick-contact {
+    --quick-bg: #199848;
+    --quick-text: hsla(147, 47%, 95%, 1);
+    --quick-shadow: rgba(25, 152, 72, .45);
+    --quick-page-bg: #ffffff;
+
     position: fixed;
     top: 40px;
     right: 25px;
     display: inline-flex;
     align-items: center;
-    padding: 10px 18px;
-    background: #199848;
-    color: #fff;
+    justify-content: center;
+    padding: 14px 28px;
+    background: var(--quick-bg);
+    color: var(--quick-text);
     text-decoration: none;
     font-family: "Biryani", system-ui, sans-serif;
-    font-weight: 400;
+    font-weight: 600;
     font-size: 14px;
-    letter-spacing: .02em;
+    letter-spacing: .12em;
+    text-transform: uppercase;
     border-radius: 4px;
-    transition: background .2s ease, transform .15s ease;
+    box-shadow: var(--quick-shadow) 2px 2px 22px;
+    cursor: pointer;
+    overflow: hidden;
     z-index: 3000;
+    transition: box-shadow .3s ease;
 }
 
-    .quick-contact:hover {
-        background: rgba(25,152,72,.85);
-        transform: translateY(-1px);
+.quick-contact:focus-visible {
+    outline: 3px solid rgba(9, 86, 36, .6);
+    outline-offset: 4px;
+}
+
+.quick-contact::before {
+    content: '';
+    pointer-events: none;
+    opacity: .6;
+    background:
+        radial-gradient(circle at 20% 35%, transparent 0, transparent 2px, var(--quick-text) 3px, var(--quick-text) 4px, transparent 4px),
+        radial-gradient(circle at 75% 44%, transparent 0, transparent 2px, var(--quick-text) 3px, var(--quick-text) 4px, transparent 4px),
+        radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, var(--quick-text) 5px, var(--quick-text) 6px, transparent 6px);
+    width: 100%;
+    height: 300%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    animation: quick-contact-bubbles 5s linear infinite both;
+}
+
+.quick-contact::after {
+    content: attr(aria-label);
+    display: block;
+    position: absolute;
+    white-space: nowrap;
+    padding: 40px 40px;
+    pointer-events: none;
+    font-family: inherit;
+    font-weight: 400;
+    top: -30px;
+    left: -24px;
+    color: rgba(255, 255, 255, .32);
+}
+
+.quick-contact__label {
+    position: relative;
+    z-index: 1;
+}
+
+.quick-contact__side {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 2;
+}
+
+.quick-contact__side--right {
+    left: 66%;
+}
+
+.quick-contact__side--left {
+    right: 66%;
+}
+
+.quick-contact__side--right::after {
+    content: attr(data-text);
+    display: block;
+    position: absolute;
+    white-space: nowrap;
+    padding: 40px 40px;
+    pointer-events: none;
+    font-family: inherit;
+    top: -30px;
+    left: calc(-66% - 20px);
+    background-color: var(--quick-page-bg);
+    color: transparent;
+    transition: transform .4s ease-out;
+    transform: translate(0, -90%) rotate(0deg);
+}
+
+.quick-contact:hover {
+    box-shadow: rgba(25, 152, 72, .55) 2px 2px 26px;
+}
+
+.quick-contact:hover .quick-contact__side--right::after {
+    transform: translate(0, -47%) rotate(0deg);
+}
+
+.quick-contact .quick-contact__side--right:hover::after {
+    transform: translate(0, -50%) rotate(-7deg);
+}
+
+.quick-contact .quick-contact__side--left:hover ~ .quick-contact__side--right::after {
+    transform: translate(0, -50%) rotate(7deg);
+}
+
+@keyframes quick-contact-bubbles {
+    from {
+        transform: translate3d(0, 0, 0);
     }
+    to {
+        transform: translate3d(0, -66.666%, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quick-contact::before {
+        animation: none;
+    }
+
+    .quick-contact__side--right::after {
+        transition: none;
+    }
+}
 
 /* ====== Panel ====== */
 .side-nav {
@@ -270,13 +384,14 @@ body {
 /* ====== Treść ====== */
 
 .content {
-    margin-left: calc(var(--nav-w-closed) + 40px);
+    margin-left: calc(var(--nav-current-width, var(--nav-w-closed)) + 40px);
     min-height: 100vh;
     padding: 40px clamp(24px, 6vw, 72px) clamp(48px, 8vw, 96px) 0;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     gap: clamp(24px, 6vw, 72px);
+    transition: margin-left .35s cubic-bezier(.22,.61,.36,1);
 }
 
 .welcome-banner {
@@ -284,6 +399,8 @@ body {
     background: rgba(255, 255, 255, 0.92);
     font-family: "Biryani", system-ui, sans-serif;
     border: 2px solid var(--brand);
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .welcome-banner__header {
@@ -342,7 +459,7 @@ body {
     }
 
     .content {
-        margin-left: calc(var(--nav-w-closed) + 40px);
+        margin-left: calc(var(--nav-current-width, var(--nav-w-closed)) + 40px);
         padding: 32px clamp(16px, 6vw, 32px) 56px clamp(16px, 6vw, 28px);
     }
 

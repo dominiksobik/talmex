@@ -91,12 +91,36 @@
     </aside>
 
     <main class="content" role="main">
-        <div class="placeholder"></div>
+        <section class="welcome-banner" aria-labelledby="welcome-banner-title">
+            <header class="welcome-banner__header">
+                <h1 class="welcome-banner__title" id="welcome-banner-title">Witamy w TALMEX</h1>
+            </header>
+            <div class="welcome-banner__body">
+                <p class="welcome-banner__intro">Od ponad 30 lat poszerzamy nasze kompetencje<br>w zakresie:</p>
+                <ul class="welcome-banner__list">
+                    <li class="welcome-banner__item">
+                        <img src="assets/icons/banner-instalacje.png" alt="Przemysłowe instalacje technologiczne" class="welcome-banner__item-icon" />
+                        <span class="welcome-banner__item-text">Przemysłowe instalacje technologiczne</span>
+                    </li>
+                    <li class="welcome-banner__item">
+                        <img src="assets/icons/banner-odzysk-wody.png" alt="Odzysk i uzdatnianie wody" class="welcome-banner__item-icon" />
+                        <span class="welcome-banner__item-text">Odzysk i uzdatnianie wody</span>
+                    </li>
+                    <li class="welcome-banner__item">
+                        <img src="assets/icons/banner-oczyszczanie.png" alt="Oczyszczanie ścieków" class="welcome-banner__item-icon" />
+                        <span class="welcome-banner__item-text">Oczyszczanie ścieków</span>
+                    </li>
+                    <li class="welcome-banner__item">
+                        <img src="assets/icons/banner-badania.png" alt="Badania pilotażowe i dobór technologii" class="welcome-banner__item-icon" />
+                        <span class="welcome-banner__item-text">Badania pilotażowe i dobór technologii</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
     </main>
 
     <script>// ====== Selektory ======
         const sideNav = document.querySelector('.side-nav');
-        const content = document.querySelector('.content');
         const navEdge = document.querySelector('.nav-edge');
         const toggleBtn = document.querySelector('.menu-toggle');
         const labelsRail = document.querySelector('.labels-rail');
@@ -142,9 +166,8 @@
 
         // ====== Geometria ======
         function setPanelRight(px) {
-            // docelowe piksele dla panelu, treści i prawej linii (animują się spójnie)
+            // docelowe piksele dla panelu oraz prawej linii (animują się spójnie)
             sideNav.style.width = px + 'px';
-            content.style.marginLeft = px + 'px';
             navEdge.style.left = (px - 1) + 'px'; // linia 2px
         }
 

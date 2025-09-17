@@ -21,7 +21,6 @@ body {
     --brand: #199848;
     --sygnet-size-closed: 67px;
     --pale-green: #eaf7f0;
-    --nav-current-width: var(--nav-w-closed);
 }
 
 /* ====== Stabilna prawa linia (animuje left razem z panelem) ====== */
@@ -383,7 +382,7 @@ body {
 
 /* ====== Treść ====== */
 .content {
-    margin-left: var(--nav-current-width, var(--nav-w-closed));
+    margin-left: calc(var(--nav-w-closed) + 40px);
     min-height: 100vh;
     padding: clamp(48px, 8vw, 96px) clamp(24px, 6vw, 72px);
     padding-left: calc(clamp(24px, 6vw, 72px) + 40px);

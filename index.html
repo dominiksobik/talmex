@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Strona główna — stabilne menu</title>
+
+    <!-- Performance -->
+    <link rel="preload" href="assets/icons/sygnet.png" as="image">
+    <link rel="preload" href="assets/icons/logo_full.png" as="image">
+    <link rel="preload" href="assets/icons/otwieracz_menu.png" as="image">
+
+    <!-- Styl + font -->
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- STAŁA PRAWa LINIA (niezależna od szerokości panelu) -->
+    <div class="nav-edge" aria-hidden="true"></div>
+
+    <!-- SZYBKI KONTAKT -->
+    <a href="#kontakt" class="quick-contact" aria-label="Szybki kontakt">
+        <span>Szybki kontakt</span>
+    </a>
+
+    <!-- PANEL LEWY -->
+    <aside class="side-nav" aria-label="Nawigacja główna">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Otwórz menu">
+            <img src="assets/icons/otwieracz_menu.png" alt="Otwieracz menu" />
+        </button>
+
+        <!-- Szyna ikon (5vw) -->
+        <div class="icon-rail">
+            <div class="icons-stack">
+                <img src="assets/icons/sygnet.png" class="icon sygnet" alt="Sygnet" />
+                <div class="menu-icons">
+                    <img src="assets/icons/home.png" class="icon" alt="Home" />
+                    <img src="assets/icons/historia.png" class="icon" alt="Historia" />
+                    <!-- Oferta (SVG placeholder) -->
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M4 3h12l4 4v14H4V3zm12 1.5V8h4" fill="currentColor"></path>
+                    </svg>
+                    <img src="assets/icons/referencje.png" class="icon" alt="Referencje" />
+                    <img src="assets/icons/realizacje.png" class="icon" alt="Przykładowe realizacje" />
+                    <!-- Jakość (SVG placeholder) -->
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                        <path d="M8 12l2.5 2.5L16 9" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <img src="assets/icons/praca.png" class="icon" alt="Praca" />
+                    <img src="assets/icons/efrr.png" class="icon" alt="EFRR" />
+                    <img src="assets/icons/kontakt.png" class="icon" alt="Kontakt" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Etykiety (widoczne po rozwinięciu) -->
+        <div class="labels-rail" aria-hidden="true">
+            <div class="labels-stack">
+                <img src="assets/icons/logo_full.png" class="logo-full" alt="TALMEX logotyp" />
+                <div class="labels-list">
+                    <span class="label">Strona główna</span>
+                    <span class="label">Historia firmy</span>
+                    <button class="label label--oferta has-submenu" type="button" aria-expanded="false" aria-controls="submenu-oferta">
+                        <span class="label-text">Oferta</span>
+                        <span class="chev" aria-hidden="true">›</span>
+                    </button>
+                    <span class="label">Referencje</span>
+                    <span class="label">Przykładowe realizacje</span>
+                    <span class="label">Jakość</span>
+                    <span class="label">Praca</span>
+                    <span class="label">EFRR</span>
+                    <span class="label">Kontakt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIP-WRAPPER: odsłania rynnę 2 podczas rozsuwania -->
+        <div class="reveal-clip" aria-hidden="true">
+            <!-- Panel 2. etapu (zielony) -->
+            <div class="submenu-rail" id="submenu-oferta" hidden>
+                <ul class="submenu">
+                    <li><a href="#instalacje">Instalacje i urządzenia</a></li>
+                    <li><a href="#zbiorniki">Zbiorniki magazynowe i technologiczne</a></li>
+                    <li><a href="#laboratorium">Laboratorium</a></li>
+                    <li><a href="#powloki">Powłoki chemoodporne</a></li>
+                    <li><a href="#rurociagi">Rurociągi i kanały</a></li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content" role="main">
+        <div class="placeholder"></div>
+    </main>
+
+    <script>// ====== Selektory ======
+        const sideNav = document.querySelector('.side-nav');
+        const content = document.querySelector('.content');
+        const navEdge = document.querySelector('.nav-edge');
+        const toggleBtn = document.querySelector('.menu-toggle');
+        const labelsRail = document.querySelector('.labels-rail');
+        const labelsList = document.querySelector('.labels-list');
+        const logoFull = document.querySelector('.logo-full');
+        const ofertaBtn = document.querySelector('.label--oferta');
+        const revealClip = document.querySelector('.reveal-clip');
+        const submenuRail = document.getElementById('submenu-oferta');
+        const submenuList = submenuRail.querySelector('.submenu');
+
+        // ====== Stałe ======
+        const ICON_W = 36;
+        const LABEL_GAP = 40;
+        const PAD_RIGHT = 40;
+        const SUB_GAP = 24;
+
+        // ====== Pomiary ======
+        const closedPx = () => Math.round(window.innerWidth * 0.05); // 5vw
+
+        function maxLabelWidth() {
+            let maxW = logoFull ? logoFull.getBoundingClientRect().width : 0;
+            labelsList.querySelectorAll('.label, .label--oferta').forEach(el => {
+                maxW = Math.max(maxW, el.getBoundingClientRect().width);
+            });
+            return Math.ceil(maxW);
+        }
+
+        // szerokość panelu submenu: najdłuższy wpis + 40px paddingu (20+20)
+        function maxSubmenuWidth() {
+            const clone = submenuList.cloneNode(true);
+            clone.style.position = 'absolute'; clone.style.visibility = 'hidden';
+            clone.style.whiteSpace = 'nowrap'; clone.style.left = '-99999px';
+            document.body.appendChild(clone);
+            const w = Math.ceil(clone.getBoundingClientRect().width);
+            document.body.removeChild(clone);
+            return w + 40;
+        }
+
+        const labelsLeftPx = () => Math.round(closedPx() * 0.5 + ICON_W / 2 + LABEL_GAP);
+
+        const rightEdgeStage1 = () => labelsLeftPx() + maxLabelWidth() + PAD_RIGHT;
+        const rightEdgeStage2 = () => rightEdgeStage1() + SUB_GAP + maxSubmenuWidth();
+
+        // ====== Geometria ======
+        function setPanelRight(px) {
+            // docelowe piksele dla panelu, treści i prawej linii (animują się spójnie)
+            sideNav.style.width = px + 'px';
+            content.style.marginLeft = px + 'px';
+            navEdge.style.left = (px - 1) + 'px'; // linia 2px
+        }
+
+        // pozycja + szerokość zielonego panelu (etap 2), oraz pionowe wyrównanie
+        function placeSubmenuPanel() {
+            const leftPx = rightEdgeStage1() + SUB_GAP; // gdzie zaczyna się panel 2
+            const widthPx = maxSubmenuWidth();           // szerokość panelu 2
+            submenuRail.style.left = leftPx + 'px';
+            submenuRail.style.width = widthPx + 'px';
+
+            // pionowa pozycja listy: dokładnie na wysokości "Oferta"
+            const clipTop = revealClip.getBoundingClientRect().top;
+            const ofertaRect = ofertaBtn.getBoundingClientRect();
+            const rowH = labelsList.getBoundingClientRect().height / 9;
+            const topList = (ofertaRect.top - clipTop) + (ofertaRect.height - rowH) / 2;
+            submenuList.style.position = 'absolute';
+            submenuList.style.top = Math.round(topList) + 'px';
+        }
+
+        // ====== Etapy ======
+        function openStage1() {
+            const right = rightEdgeStage1();
+
+            // reset etapu 2
+            ofertaBtn.classList.remove('open');
+            ofertaBtn.setAttribute('aria-expanded', 'false');
+            submenuRail.hidden = true;
+            submenuRail.style.left = '';
+            submenuRail.style.width = '';
+            submenuList.style.top = '';
+
+            setPanelRight(right);
+            sideNav.classList.add('open');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+
+            sideNav.classList.remove('expanded');
+            labelsRail.setAttribute('aria-hidden', 'true');
+        }
+
+        function openStage2() {
+            submenuRail.hidden = false;
+            ofertaBtn.classList.add('open');
+            ofertaBtn.setAttribute('aria-expanded', 'true');
+
+            placeSubmenuPanel();               // ustaw left/width panelu 2 + top listy
+            setPanelRight(rightEdgeStage2());  // dosuń cały panel (odkrywa rynnę 2)
+        }
+
+        function closeAll() {
+            sideNav.classList.remove('open', 'expanded');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            ofertaBtn.classList.remove('open');
+            ofertaBtn.setAttribute('aria-expanded', 'false');
+
+            submenuRail.hidden = true;
+            submenuRail.style.left = '';
+            submenuRail.style.width = '';
+            submenuList.style.top = '';
+
+            setPanelRight(closedPx());         // wróć do 5vw (linia też wraca)
+            labelsRail.setAttribute('aria-hidden', 'true');
+        }
+
+        // ====== Zdarzenia ======
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!sideNav.classList.contains('open')) openStage1();
+            else closeAll();
+        });
+
+        // po animacji width — odsłoń etykiety (bez ponownego przeliczania)
+        sideNav.addEventListener('transitionend', (e) => {
+            if (e.target !== sideNav || e.propertyName !== 'width') return;
+            if (sideNav.classList.contains('open')) {
+                sideNav.classList.add('expanded');
+                labelsRail.setAttribute('aria-hidden', 'false');
+            }
+        });
+
+        ofertaBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!sideNav.classList.contains('open')) {
+                // najpierw etap 1, a po animacji odsłoń rynnę 2
+                openStage1();
+                sideNav.addEventListener('transitionend', function handler(ev) {
+                    if (ev.target === sideNav && ev.propertyName === 'width') {
+                        openStage2();
+                        sideNav.removeEventListener('transitionend', handler);
+                    }
+                });
+                return;
+            }
+            // przełączanie etapu 2, gdy panel już otwarty
+            if (!ofertaBtn.classList.contains('open')) openStage2();
+            else openStage1();
+        });
+
+        // utrzymanie geometrii przy resize/font-load/scroll
+        function refreshIfOpen() {
+            if (!sideNav.classList.contains('open')) { setPanelRight(closedPx()); return; }
+            const stage2 = ofertaBtn.classList.contains('open');
+            if (stage2) { placeSubmenuPanel(); setPanelRight(rightEdgeStage2()); }
+            else { setPanelRight(rightEdgeStage1()); }
+        }
+        window.addEventListener('resize', refreshIfOpen);
+        window.addEventListener('scroll', () => {
+            // scroll może zmienić metryki top; dociąg pionowe wyrównanie gdy etap 2
+            if (ofertaBtn.classList.contains('open') && sideNav.classList.contains('open')) {
+                placeSubmenuPanel();
+            }
+        }, { passive: true });
+
+        if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refreshIfOpen); }
+
+        // Init
+        setPanelRight(closedPx());</script>
+</body>
+</html>

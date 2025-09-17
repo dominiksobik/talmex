@@ -1,0 +1,291 @@
+/* ====== Reset i basics ====== */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: #ffffff;
+    color: #111;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+:root {
+    --nav-w-closed: 5vw; /* szerokość szyny ikon na starcie */
+    --label-gap: 40px; /* odstęp ikona → etykieta */
+    --icon-w: 36px;
+    --brand: #199848;
+    --sygnet-size-closed: 67px;
+    --pale-green: #eaf7f0;
+}
+
+/* ====== Stabilna prawa linia (animuje left razem z panelem) ====== */
+.nav-edge {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    left: 0; /* JS ustawia dokładny X */
+    background: var(--brand);
+    pointer-events: none;
+    z-index: 2500;
+    transition: left .35s cubic-bezier(.22,.61,.36,1);
+}
+
+/* ====== SZYBKI KONTAKT ====== */
+.quick-contact {
+    position: fixed;
+    top: 40px;
+    right: 25px;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    background: #199848;
+    color: #fff;
+    text-decoration: none;
+    font-family: "Biryani", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: .02em;
+    border-radius: 4px;
+    transition: background .2s ease, transform .15s ease;
+    z-index: 3000;
+}
+
+    .quick-contact:hover {
+        background: rgba(25,152,72,.85);
+        transform: translateY(-1px);
+    }
+
+/* ====== Panel ====== */
+.side-nav {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--nav-w-closed);
+    height: 100vh;
+    background: #ffffff;
+    border-right: 2px solid var(--brand);
+    z-index: 200;
+    transition: width .35s cubic-bezier(.22,.61,.36,1);
+    overflow: visible;
+}
+
+/* ====== Otwieracz ====== */
+.menu-toggle {
+    position: absolute;
+    top: 50%;
+    right: -28px;
+    transform: translateY(-50%);
+    border: 0;
+    padding: 12px;
+    background: transparent;
+    cursor: pointer;
+    z-index: 3000;
+}
+
+    .menu-toggle img {
+        display: block;
+        height: 80px;
+        width: auto;
+        transition: transform .25s ease;
+        pointer-events: none;
+    }
+
+.side-nav.open .menu-toggle img {
+    transform: scaleX(-1);
+}
+
+/* ====== Szyna ikon ====== */
+.icon-rail {
+    width: var(--nav-w-closed);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.icons-stack {
+    width: 100%;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    /* Sygnet — znika po otwarciu */
+    .icons-stack .sygnet {
+        width: min(var(--sygnet-size-closed), calc(var(--nav-w-closed) - 12px)) !important;
+        height: auto;
+        transition: opacity .2s ease;
+    }
+
+.side-nav.open .sygnet {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Lista ikon pod sygnentem — 65vh */
+.menu-icons {
+    margin-top: 15px;
+    height: 65vh;
+    display: grid;
+    grid-template-rows: repeat(9, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+.icon {
+    display: block;
+    width: var(--icon-w);
+    height: auto;
+    color: #222;
+    user-select: none;
+}
+
+/* ====== Etykiety ====== */
+.labels-rail {
+    position: absolute;
+    left: calc(0.5 * var(--nav-w-closed) + (var(--icon-w) / 2) + var(--label-gap));
+    top: 0;
+    height: 100%;
+    padding-right: 40px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease;
+}
+
+.side-nav.expanded .labels-rail {
+    opacity: 1;
+    visibility: visible;
+}
+
+.labels-stack {
+    padding-top: 40px;
+}
+
+.logo-full {
+    display: block;
+    height: 54px;
+    width: auto;
+    margin-bottom: 14px;
+}
+
+.labels-list {
+    margin-top: 30px;
+    height: 65vh;
+    display: grid;
+    grid-template-rows: repeat(9, 1fr);
+    align-items: center;
+}
+
+.label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-family: "Biryani", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1;
+    white-space: nowrap;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    cursor: default;
+}
+
+    .label.has-submenu {
+        cursor: pointer;
+    }
+
+.label--oferta .chev {
+    display: inline-block;
+    margin-left: 6px;
+    transition: transform .25s ease;
+}
+
+.label--oferta.open .chev {
+    transform: rotate(90deg);
+}
+
+/* ====== Clip-wrapper, który odsłania panel 2 podczas rozsuwania ====== */
+.reveal-clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden; /* klucz do „odsłaniania” rynny 2 */
+    pointer-events: none; /* nic nie łapie klików */
+    z-index: 1;
+}
+
+/* ====== Submenu (zielony panel etapu 2) ====== */
+/* Geometrię (left+width) nadaje JS, żeby nie nachodziło na rynnę 1 */
+.submenu-rail {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: var(--pale-green);
+    border-left: 2px solid var(--brand);
+    padding: 0 20px; /* 20 + 20 = 40px */
+    display: none;
+    pointer-events: auto; /* same linki mają działać */
+}
+
+.side-nav.expanded .submenu-rail {
+    display: block;
+}
+
+.submenu-rail[hidden] {
+    display: none !important;
+}
+
+.submenu {
+    position: relative; /* top z JS (wyrównanie do „Oferta”) */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: "Biryani", system-ui, sans-serif;
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+    .submenu a {
+        color: #0b3b20;
+        text-decoration: none;
+        padding: 6px 8px;
+        border-radius: 4px;
+        display: block;
+    }
+
+        .submenu a:hover {
+            background: rgba(25,152,72,.15);
+        }
+
+/* ====== Treść ====== */
+.content {
+    margin-left: var(--nav-w-closed); /* start 5vw; dalej JS ustawia piksele */
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    transition: margin-left .35s cubic-bezier(.22,.61,.36,1);
+}
+
+.placeholder {
+    width: min(70ch, 70%);
+    height: 40vh;
+    border: 1px dashed #ddd;
+    border-radius: 12px;
+    opacity: .15;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .side-nav, .labels-rail, .content, .menu-toggle img, .nav-edge {
+        transition: none !important;
+    }
+}

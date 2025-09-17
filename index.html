@@ -155,7 +155,6 @@
 
     <script>// ====== Selektory ======
         const sideNav = document.querySelector('.side-nav');
-        const content = document.querySelector('.content');
         const navEdge = document.querySelector('.nav-edge');
         const toggleBtn = document.querySelector('.menu-toggle');
         const labelsRail = document.querySelector('.labels-rail');
@@ -203,9 +202,7 @@
         function setPanelRight(px) {
             // docelowe piksele dla panelu, treści i prawej linii (animują się spójnie)
             sideNav.style.width = px + 'px';
-            content.style.marginLeft = px + 'px';
             navEdge.style.left = (px - 1) + 'px'; // linia 2px
-            document.documentElement.style.setProperty('--nav-current-width', px + 'px');
         }
 
         // pozycja + szerokość zielonego panelu (etap 2), oraz pionowe wyrównanie
